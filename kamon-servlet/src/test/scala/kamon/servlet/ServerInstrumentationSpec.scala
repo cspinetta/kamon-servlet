@@ -16,8 +16,6 @@
 
 package kamon.servlet
 
-import javax.servlet.Servlet
-
 import kamon.Kamon
 import kamon.servlet.server.{JettySupport, SyncTestServlet}
 import kamon.trace.Span
@@ -42,9 +40,9 @@ class ServerInstrumentationSpec extends WordSpec
   override val servlet = SyncTestServlet()
 
   override protected def beforeAll(): Unit = {
+    Kamon.config()
     startServer()
     startRegistration()
-    Kamon.config()
   }
 
   override protected def afterAll(): Unit = {
