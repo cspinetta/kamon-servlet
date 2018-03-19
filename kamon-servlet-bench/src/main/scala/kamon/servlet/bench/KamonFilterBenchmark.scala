@@ -8,7 +8,7 @@ import kamon.servlet.server.JettyServer
 import org.openjdk.jmh.annotations._
 import org.openjdk.jmh.infra.Blackhole
 
-
+@State(Scope.Benchmark)
 class KamonFilterBenchmark {
 
   import com.softwaremill.sttp._
@@ -34,7 +34,7 @@ class KamonFilterBenchmark {
   }
 
   /**
-    * This benchmark attempts to measure the performance without any context propagation.
+    * This benchmark attempts to measure the performance with tracing and metrics enabled.
     *
     * @param blackhole a { @link Blackhole} object supplied by JMH
     */
@@ -44,6 +44,19 @@ class KamonFilterBenchmark {
   @Fork
   def tracing(blackhole: Blackhole): Unit = {
     blackhole.consume(get("/tracing/ok").code)
+  }
+
+  /**
+    * This benchmark attempts to measure the performance with NO tracing NEITHER metrics enabled.
+    *
+    * @param blackhole a { @link Blackhole} object supplied by JMH
+    */
+  @Benchmark
+  @BenchmarkMode(Array(Mode.AverageTime))
+  @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @Fork
+  def none(blackhole: Blackhole): Unit = {
+    blackhole.consume(get("/ok").code)
   }
 
 }

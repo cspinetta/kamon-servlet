@@ -36,7 +36,7 @@ class JettyServer(socketAddress: InetSocketAddress = new InetSocketAddress(0)) {
 
 //    servlet.setAsyncSupported(true)
     context.addServlet(servlet, "/")
-    context.addFilter(classOf[KamonFilter], "/traced/*", util.EnumSet.allOf(classOf[DispatcherType]))
+    context.addFilter(classOf[KamonFilter], "/tracing/*", util.EnumSet.allOf(classOf[DispatcherType]))
     server.start()
     this
   }
