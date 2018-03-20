@@ -26,7 +26,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
 
 
@@ -54,6 +54,7 @@ class HttpMetricsSpec extends WordSpec
   override protected def afterAll(): Unit = {
     stopRegistration()
     stopServer()
+    Await.result(Kamon.stopAllReporters(), 2 seconds)
   }
 
   private def get(path: String): Id[Response[String]] = {

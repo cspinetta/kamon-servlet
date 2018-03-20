@@ -54,7 +54,7 @@ class ServerInstrumentationSpec extends WordSpec
     sttp.get(Uri("localhost", port).path(path)).headers(headers: _*).send()
   }
 
-  "The Server  instrumentation" should {
+  "The Server instrumentation" should {
     "propagate the current context and respond to the ok action" in {
 
       get("/sync/tracing/ok").code shouldBe 200

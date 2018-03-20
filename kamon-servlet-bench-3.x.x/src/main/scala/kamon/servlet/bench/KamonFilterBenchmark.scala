@@ -53,8 +53,34 @@ class KamonFilterBenchmark {
   @Benchmark
   @BenchmarkMode(Array(Mode.AverageTime))
   @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @Fork(jvmArgsAppend = Array("-Dkamon.servlet.metrics.enabled=false"))
+  def trace_new_span_no_metrics(blackhole: Blackhole): Unit = {
+    blackhole.consume(get("/tracing/ok"))
+  }
+
+  /**
+    * This benchmark attempts to measure the performance with tracing and metrics enabled.
+    *
+    * @param blackhole a { @link Blackhole} object supplied by JMH
+    */
+  @Benchmark
+  @BenchmarkMode(Array(Mode.AverageTime))
+  @OutputTimeUnit(TimeUnit.NANOSECONDS)
   @Fork
   def trace_resuming_span(blackhole: Blackhole, incomingContext: IncomingContext): Unit = {
+    blackhole.consume(get("/tracing/ok"), incomingContext.headersB3)
+  }
+
+  /**
+    * This benchmark attempts to measure the performance with tracing and metrics enabled.
+    *
+    * @param blackhole a { @link Blackhole} object supplied by JMH
+    */
+  @Benchmark
+  @BenchmarkMode(Array(Mode.AverageTime))
+  @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @Fork(jvmArgsAppend = Array("-Dkamon.servlet.metrics.enabled=false"))
+  def trace_resuming_span_no_metrics(blackhole: Blackhole, incomingContext: IncomingContext): Unit = {
     blackhole.consume(get("/tracing/ok"), incomingContext.headersB3)
   }
 

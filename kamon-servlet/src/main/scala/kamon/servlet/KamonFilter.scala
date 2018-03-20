@@ -29,7 +29,7 @@ trait KamonFilter {
   type Response <: ResponseServlet
   type Chain    <: FilterDelegation[Request, Response]
 
-  val servletMetrics = ServletMetrics(ServiceMetrics(GeneralMetrics(), RequestTimeMetrics(), ResponseTimeMetrics()))
+  val servletMetrics = ServletMetrics()
 
   def executeAround(request: Request, response: Response, next: Chain): Unit = {
     val start = Kamon.clock().instant()
