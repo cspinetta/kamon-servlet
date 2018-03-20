@@ -20,7 +20,7 @@ import java.net.InetSocketAddress
 import java.util
 
 import javax.servlet.{DispatcherType, Servlet}
-import kamon.servlet.KamonFilter3
+import kamon.servlet.KamonFilterV3
 import org.eclipse.jetty.server.{Server, ServerConnector}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 
@@ -36,7 +36,7 @@ class JettyServer(socketAddress: InetSocketAddress = new InetSocketAddress(0)) {
 
 //    servlet.setAsyncSupported(true)
     context.addServlet(servlet, "/")
-    context.addFilter(classOf[KamonFilter3], "/tracing/*", util.EnumSet.allOf(classOf[DispatcherType]))
+    context.addFilter(classOf[KamonFilterV3], "/tracing/*", util.EnumSet.allOf(classOf[DispatcherType]))
     server.start()
     this
   }
