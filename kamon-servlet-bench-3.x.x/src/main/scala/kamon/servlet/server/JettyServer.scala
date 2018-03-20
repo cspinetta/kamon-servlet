@@ -18,9 +18,9 @@ package kamon.servlet.server
 
 import java.net.InetSocketAddress
 import java.util
-import javax.servlet.{DispatcherType, Servlet}
 
-import kamon.servlet.KamonFilter
+import javax.servlet.{DispatcherType, Servlet}
+import kamon.servlet.KamonFilter3
 import org.eclipse.jetty.server.{Server, ServerConnector}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 
@@ -31,12 +31,12 @@ class JettyServer(socketAddress: InetSocketAddress = new InetSocketAddress(0)) {
   val server = new Server(socketAddress)
   val context = new ServletContextHandler(server, "/")
 
-  def start(clazz: Servlet, path: String = "/*"): this.type = {
-    val servlet = new ServletHolder(clazz)
+  def start(): this.type = {
+    val servlet = new ServletHolder(classOf[BenchServlet])
 
-    servlet.setAsyncSupported(true)
+//    servlet.setAsyncSupported(true)
     context.addServlet(servlet, "/")
-    context.addFilter(classOf[KamonFilter], "/*", util.EnumSet.allOf(classOf[DispatcherType]))
+    context.addFilter(classOf[KamonFilter3], "/tracing/*", util.EnumSet.allOf(classOf[DispatcherType]))
     server.start()
     this
   }
@@ -63,7 +63,7 @@ trait JettySupport {
   private var jetty = Option.empty[JettyServer]
 
   def startServer(): Unit = {
-    jetty = Some(new JettyServer().start(servlet))
+    jetty = Some(new JettyServer().start())
   }
 
   def stopServer(): Unit = {

@@ -16,58 +16,53 @@
 
 package kamon.servlet
 
-import javax.servlet._
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, RequestTimeMetrics, ResponseTimeMetrics, ServiceMetrics}
-import kamon.servlet.server._
+import kamon.servlet.server.{RequestServlet, _}
 
 import scala.language.postfixOps
 import scala.util.Try
 
-class KamonFilter extends Filter {
+trait KamonFilter {
+
+  type Request  <: RequestServlet
+  type Response <: ResponseServlet
+  type Chain    <: FilterDelegation[Request, Response]
 
   val servletMetrics = ServletMetrics(ServiceMetrics(GeneralMetrics(), RequestTimeMetrics(), ResponseTimeMetrics()))
 
-  override def init(filterConfig: FilterConfig): Unit = ()
-
-  override def destroy(): Unit = ()
-
-  override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain): Unit = {
-    val req = request.asInstanceOf[HttpServletRequest]
-    val res = response.asInstanceOf[HttpServletResponse]
-
+  def executeAround(request: Request, response: Response, next: Chain): Unit = {
     val start = Kamon.clock().instant()
 
-    servletMetrics.withMetrics(start, req, res) { metricsContinuation =>
-      ServletTracing.withTracing(req, res, metricsContinuation) { tracingContinuation =>
-        process(req, res, tracingContinuation) {
-          chain.doFilter(request, response)
+    servletMetrics.withMetrics(start, request, response) { metricsContinuation =>
+      ServletTracing.withTracing(request, response, metricsContinuation) { tracingContinuation =>
+        process(request, response, tracingContinuation) {
+          next.chain(request, response)
         }
       }
     } get
 
   }
 
-  private def process(request: HttpServletRequest, response: HttpServletResponse,
+  private def process(request: Request, response: Response,
                       tracingContinuation: TracingContinuation)(thunk: => Unit): Try[Unit] = {
     val result = Try(thunk)
     onFinish(request, response)(result, tracingContinuation)
   }
 
-  private def onFinish(request: HttpServletRequest, response: HttpServletResponse): (Try[Unit], TracingContinuation) => Try[Unit] = {
-    if (request.isAsyncStarted) handleAsync(request, response)
+  private def onFinish(request: Request, response: Response): (Try[Unit], TracingContinuation) => Try[Unit] = {
+    if (request.isAsync) handleAsync(request, response)
     else                        handleSync(request, response)
   }
 
-  private def handleAsync(request: HttpServletRequest, response: HttpServletResponse)
+  private def handleAsync(request: Request, response: Response)
                          (result: Try[Unit], continuation: TracingContinuation): Try[Unit] = {
     val handler = FromTracingResponseHandler(continuation)
-    request.getAsyncContext.addListener(KamonAsyncListener(handler))
+    request.addListener(handler)
     result
   }
 
-  private def handleSync(request: HttpServletRequest, response: HttpServletResponse)
+  private def handleSync(request: Request, response: Response)
                         (result: Try[Unit], continuation: TracingContinuation): Try[Unit] = {
     val handler = FromTracingResponseHandler(continuation)
     result
@@ -77,7 +72,7 @@ class KamonFilter extends Filter {
       }
       .recover {
         case error: Throwable =>
-          handler.onError()
+          handler.onError(Some(error))
           error
       }
   }
@@ -85,8 +80,7 @@ class KamonFilter extends Filter {
 }
 
 case class FromTracingResponseHandler(continuation: TracingContinuation) extends KamonResponseHandler {
-  override def onError(): Unit = continuation.onError(Kamon.clock().instant())
+  override def onError(error: Option[Throwable]): Unit = continuation.onError(Kamon.clock().instant()) // FIXME: save Throwable
   override def onComplete(): Unit = continuation.onSuccess(Kamon.clock().instant())
   override def onStartAsync(): Unit = ()
-  override def onTimeout(): Unit = this.onError()
 }

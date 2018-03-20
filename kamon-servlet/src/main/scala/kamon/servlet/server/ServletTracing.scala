@@ -18,7 +18,6 @@ package kamon.servlet.server
 
 import java.time.Instant
 import java.util.Locale
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import kamon.Kamon
 import kamon.context.{Context, TextMap}
@@ -28,7 +27,7 @@ import scala.util.Try
 
 object ServletTracing {
 
-  def withTracing(request: HttpServletRequest, response: HttpServletResponse, metricsContinuation: MetricsContinuation)
+  def withTracing(request: RequestServlet, response: ResponseServlet, metricsContinuation: MetricsContinuation)
                  (continuation: TracingContinuation => Try[Unit]): Try[Unit] = {
 
     val incomingContext = decodeContext(request)
@@ -39,41 +38,31 @@ object ServletTracing {
     }
   }
 
-  private def createSpan(incomingContext: Context, request: HttpServletRequest): Span = {
+  private def createSpan(incomingContext: Context, request: RequestServlet): Span = {
     val operationName = kamon.servlet.KamonServletSupport.generateOperationName(request)
     Kamon.buildSpan(operationName)
       .asChildOf(incomingContext.get(Span.ContextKey))
       .withMetricTag("span.kind", "server")
       .withMetricTag("component", "servlet.server")
       .withTag("http.method", request.getMethod.toUpperCase(Locale.ENGLISH))
-      .withTag("http.url", request.getRequestURI)
+      .withTag("http.url", request.uri)
       .start()
   }
 
 
-  private def decodeContext(request: HttpServletRequest): Context = {
+  private def decodeContext(request: RequestServlet): Context = {
     val headersTextMap = readOnlyTextMapFromHeaders(request)
     Kamon.contextCodec().HttpHeaders.decode(headersTextMap)
   }
 
-  private def readOnlyTextMapFromHeaders(request: HttpServletRequest): TextMap = new TextMap {
-    private val headersMap: Map[String, String] = {
-      val headersIterator = request.getHeaderNames
-      val headers = Map.newBuilder[String, String]
-      while (headersIterator.hasMoreElements) {
-        val name = headersIterator.nextElement()
-        headers += (name -> request.getHeader(name))
-      }
-      headers.result()
-    }
-
-    override def values: Iterator[(String, String)] = headersMap.iterator
-    override def get(key: String): Option[String] = headersMap.get(key)
+  private def readOnlyTextMapFromHeaders(request: RequestServlet): TextMap = new TextMap {
+    override def values: Iterator[(String, String)] = request.headers.iterator
+    override def get(key: String): Option[String] = request.headers.get(key)
     override def put(key: String, value: String): Unit = {}
   }
 }
 
-case class TracingContinuation(request: HttpServletRequest, response: HttpServletResponse,
+case class TracingContinuation(request: RequestServlet, response: ResponseServlet,
                                serverSpan: Span, continuation: MetricsContinuation) {
 
   def onSuccess(end: Instant): Unit = {
@@ -89,8 +78,8 @@ case class TracingContinuation(request: HttpServletRequest, response: HttpServle
   }
 
   private def always(end: Instant): Unit = {
-    handleStatusCode(serverSpan, response.getStatus)
-    serverSpan.tag("http.status_code", response.getStatus)
+    handleStatusCode(serverSpan, response.status)
+    serverSpan.tag("http.status_code", response.status)
   }
 
   private def handleStatusCode(span: Span, code: Int): Unit =

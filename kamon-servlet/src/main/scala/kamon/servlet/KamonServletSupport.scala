@@ -16,19 +16,18 @@
 
 package kamon.servlet
 
-import javax.servlet.http.HttpServletRequest
-
 import com.typesafe.config.Config
 import kamon.Kamon
+import kamon.servlet.server.RequestServlet
 import kamon.util.DynamicAccess
 
 object KamonServletSupport {
   @volatile var nameGenerator: NameGenerator = nameGeneratorFromConfig(Kamon.config())
   @volatile var addHttpStatusCodeAsMetricTag: Boolean = addHttpStatusCodeAsMetricTagFromConfig(Kamon.config())
 
-  def generateOperationName(request: HttpServletRequest): String = nameGenerator.generateOperationName(request)
+  def generateOperationName(request: RequestServlet): String = nameGenerator.generateOperationName(request)
 
-  def generateHttpClientOperationName(request: HttpServletRequest): String = nameGenerator.generateHttpClientOperationName(request)
+  def generateHttpClientOperationName(request: RequestServlet): String = nameGenerator.generateHttpClientOperationName(request)
 
   private def nameGeneratorFromConfig(config: Config): NameGenerator = {
     val dynamic = new DynamicAccess(getClass.getClassLoader)
@@ -47,8 +46,8 @@ object KamonServletSupport {
 }
 
 trait NameGenerator {
-  def generateOperationName(request: HttpServletRequest): String
-  def generateHttpClientOperationName(request: HttpServletRequest): String
+  def generateOperationName(request: RequestServlet): String
+  def generateHttpClientOperationName(request: RequestServlet): String
 }
 
 class DefaultNameGenerator extends NameGenerator {
@@ -60,15 +59,15 @@ class DefaultNameGenerator extends NameGenerator {
   private val localCache = TrieMap.empty[String, String]
   private val normalizePattern = """\$([^<]+)<[^>]+>""".r
 
-  override def generateHttpClientOperationName(request: HttpServletRequest): String = {
-    request.getRequestURL.toString
+  override def generateHttpClientOperationName(request: RequestServlet): String = {
+    request.url
   }
 
-  override def generateOperationName(request: HttpServletRequest): String = {
+  override def generateOperationName(request: RequestServlet): String = {
 
-    localCache.getOrElseUpdate(s"${request.getMethod}${request.getRequestURI}", {
+    localCache.getOrElseUpdate(s"${request.getMethod}${request.uri}", {
       // Convert paths of form GET /foo/bar/$paramname<regexp>/blah to foo.bar.paramname.blah.get
-      val uri = request.getRequestURI
+      val uri = request.uri
       val p = normalizePattern.replaceAllIn(uri, "$1").replace('/', '.').dropWhile(_ == '.')
       val normalisedPath = {
         if (p.lastOption.exists(_ != '.')) s"$p."

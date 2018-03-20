@@ -17,10 +17,9 @@
 package kamon.servlet
 
 import java.time.temporal.ChronoUnit
-import javax.servlet.Servlet
 
 import kamon.Kamon
-import kamon.servlet.server.{AsyncTestServlet, JettySupport, Servlets}
+import kamon.servlet.server.{AsyncTestServlet, JettySupport}
 import kamon.trace.Span
 import kamon.trace.Span.TagValue
 import org.scalatest.concurrent.Eventually

@@ -17,7 +17,6 @@
 package kamon.servlet
 
 import java.util.concurrent.Executors
-import javax.servlet.Servlet
 
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}

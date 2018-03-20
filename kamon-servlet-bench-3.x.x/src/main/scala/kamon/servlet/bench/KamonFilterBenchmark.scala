@@ -3,7 +3,6 @@ package kamon.servlet.bench
 import java.util.concurrent.TimeUnit
 
 import kamon.Kamon
-import kamon.servlet.KamonFilter
 import kamon.servlet.server.JettyServer
 import org.openjdk.jmh.annotations._
 import org.openjdk.jmh.infra.Blackhole
