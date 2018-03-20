@@ -65,16 +65,18 @@ object ServletTracing {
 case class TracingContinuation(request: RequestServlet, response: ResponseServlet,
                                serverSpan: Span, continuation: MetricsContinuation) {
 
+  import TracingContinuation._
+
   def onSuccess(end: Instant): Unit = {
     continuation.onSuccess(end)
     always(end)
     serverSpan.finish(Kamon.clock().instant())
   }
 
-  def onError(end: Instant): Unit = {
+  def onError(end: Instant, error: Option[Throwable]): Unit = {
     always(end)
     continuation.onError(end)
-    finishSpanWithError(serverSpan, Kamon.clock().instant())
+    finishSpanWithError(serverSpan, Kamon.clock().instant(), error)
   }
 
   private def always(end: Instant): Unit = {
@@ -86,8 +88,15 @@ case class TracingContinuation(request: RequestServlet, response: ResponseServle
     if (code >= 500) span.addError("error")
     else if (code == 404) span.setOperationName("not-found")
 
-  private def finishSpanWithError(serverSpan: Span, endTimestamp: Instant): Unit = {
-    serverSpan.addError("abnormal termination")
+  private def finishSpanWithError(serverSpan: Span, endTimestamp: Instant, error: Option[Throwable]): Unit = {
+    error match {
+      case Some(e) => serverSpan.addError(errorMessage, e)
+      case None    => serverSpan.addError(errorMessage)
+    }
     serverSpan.finish(endTimestamp)
   }
+}
+
+object TracingContinuation {
+  val errorMessage = "abnormal termination"
 }

@@ -14,13 +14,13 @@
  * =========================================================================================
  */
 
-package kamon.servlet.v3.server
+package kamon.servlet.v25.server
 
 import javax.servlet.ServletRequest
 import javax.servlet.http.HttpServletRequest
-import kamon.servlet.server.{KamonResponseHandler, RequestServlet}
+import kamon.servlet.server.RequestServlet
 
-case class RequestServletV3(underlineRequest: HttpServletRequest) extends RequestServlet {
+case class RequestServletV25(underlineRequest: HttpServletRequest) extends RequestServlet {
 
   override def getMethod: String = underlineRequest.getMethod
 
@@ -29,25 +29,20 @@ case class RequestServletV3(underlineRequest: HttpServletRequest) extends Reques
   override def url: String = underlineRequest.getRequestURL.toString
 
   override def headers: Map[String, String] = {
-    val headersIterator = underlineRequest.getHeaderNames
-    val headers = Map.newBuilder[String, String]
-    while (headersIterator.hasMoreElements) {
-      val name = headersIterator.nextElement()
-      headers += (name -> underlineRequest.getHeader(name))
-    }
-    headers.result()
-  }
-
-  def isAsync: Boolean = underlineRequest.isAsyncStarted
-
-  def addListener(handler: KamonResponseHandler): Unit = {
-    underlineRequest.getAsyncContext.addListener(KamonAsyncListener(handler))
+//    val headersIterator = underlineRequest.getHeaderNames
+//    val headers = Map.newBuilder[String, String]
+//    while (headersIterator.hasMoreElements) {
+//      val name = headersIterator.nextElement()
+//      headers += (name -> underlineRequest.getHeader(name))
+//    }
+//    headers.result()
+    ??? // TODO
   }
 }
 
-object RequestServletV3 {
+object RequestServletV25 {
 
-  def apply(request: ServletRequest): RequestServletV3 = {
-    new RequestServletV3(request.asInstanceOf[HttpServletRequest])
+  def apply(request: ServletRequest): RequestServletV25 = {
+    new RequestServletV25(request.asInstanceOf[HttpServletRequest])
   }
 }

@@ -16,11 +16,11 @@
 
 package kamon.servlet.server
 
+import scala.util.Try
+
 
 trait RequestServlet {
 
-  def isAsync: Boolean
-  def addListener(handler: KamonResponseHandler)
   def getMethod: String
   def uri: String
   def url: String
@@ -34,5 +34,5 @@ trait ResponseServlet {
 
 trait FilterDelegation[Request  <: RequestServlet, Response <: ResponseServlet] {
 
-  def chain(request: Request, response: Response): Unit
+  def chain(request: Request, response: Response)(tracingContinuation: TracingContinuation): Try[Unit]
 }
