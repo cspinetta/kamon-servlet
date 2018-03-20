@@ -14,20 +14,19 @@
  * =========================================================================================
  */
 
-package kamon.servlet
+package kamon.servlet.v3
 
 import java.util.concurrent.Executors
 
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}
-import kamon.servlet.server.{AsyncTestServlet, JettySupport}
+import kamon.servlet.v3.server.{AsyncTestServlet, JettySupport}
 import kamon.testkit.MetricInspection
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 
 class AsyncHttpMetricsSpec extends WordSpec

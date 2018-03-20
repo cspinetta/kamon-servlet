@@ -14,17 +14,16 @@
  * =========================================================================================
  */
 
-package kamon.servlet
+package kamon.servlet.v3
 
 import kamon.Kamon
-import kamon.servlet.server.{JettySupport, SyncTestServlet}
+import kamon.servlet.v3.server.{JettySupport, SyncTestServlet}
 import kamon.trace.Span
 import kamon.trace.Span.TagValue
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 class ServerInstrumentationSpec extends WordSpec
   with Matchers

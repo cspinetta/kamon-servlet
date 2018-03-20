@@ -21,7 +21,7 @@ import kamon.Kamon
 import kamon.servlet.server.RequestServlet
 import kamon.util.DynamicAccess
 
-object KamonServletSupport {
+object Servlet {
   @volatile var nameGenerator: NameGenerator = nameGeneratorFromConfig(Kamon.config())
   @volatile var addHttpStatusCodeAsMetricTag: Boolean = addHttpStatusCodeAsMetricTagFromConfig(Kamon.config())
 

@@ -14,13 +14,13 @@
  * =========================================================================================
  */
 
-package kamon.servlet.server
+package kamon.servlet.v3.server
 
 import java.net.InetSocketAddress
 import java.util
 
 import javax.servlet.{DispatcherType, Servlet}
-import kamon.servlet.KamonFilterV3
+import kamon.servlet.v3.KamonFilterV3
 import org.eclipse.jetty.server.{Server, ServerConnector}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 

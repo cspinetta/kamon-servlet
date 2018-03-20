@@ -17,8 +17,7 @@
 package kamon.servlet
 
 import kamon.Kamon
-import kamon.servlet.Metrics.{GeneralMetrics, RequestTimeMetrics, ResponseTimeMetrics, ServiceMetrics}
-import kamon.servlet.server.{RequestServlet, _}
+import kamon.servlet.server._
 
 import scala.language.postfixOps
 import scala.util.Try

@@ -14,24 +14,19 @@
  * =========================================================================================
  */
 
-package kamon.servlet
+package kamon.servlet.v3.server
 
-import kamon.Kamon
-import kamon.testkit.{Reconfigure, TestSpanReporter}
-import kamon.util.Registration
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletResponse
+import kamon.servlet.server.ResponseServlet
 
-trait SpanReporter extends Reconfigure {
+case class ResponseServletV3(underlineResponse: HttpServletResponse) extends ResponseServlet {
+  override def status: Int = underlineResponse.getStatus
+}
 
-  @volatile var registration: Registration = _
-  val reporter = new TestSpanReporter()
+object ResponseServletV3 {
 
-  def startRegistration(): Unit = {
-    enableFastSpanFlushing()
-    sampleAlways()
-    registration = Kamon.addReporter(reporter)
-  }
-
-   def stopRegistration(): Unit = {
-    registration.cancel()
+  def apply(request: ServletResponse): ResponseServletV3 = {
+    new ResponseServletV3(request.asInstanceOf[HttpServletResponse])
   }
 }

@@ -14,7 +14,7 @@
  * =========================================================================================
  */
 
-package kamon.servlet.server
+package kamon.servlet.v3.server
 
 import javax.servlet.http.{HttpServlet, HttpServletRequest, HttpServletResponse}
 

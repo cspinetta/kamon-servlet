@@ -39,7 +39,7 @@ object ServletTracing {
   }
 
   private def createSpan(incomingContext: Context, request: RequestServlet): Span = {
-    val operationName = kamon.servlet.KamonServletSupport.generateOperationName(request)
+    val operationName = kamon.servlet.Servlet.generateOperationName(request)
     Kamon.buildSpan(operationName)
       .asChildOf(incomingContext.get(Span.ContextKey))
       .withMetricTag("span.kind", "server")
