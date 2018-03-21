@@ -72,7 +72,7 @@ object RequestServletV25 {
     }
   }
 
-  // FIXME: include extra headers (feature recently added to kamon)
+  // FIXME: include more headers
   val tracingHeaders = List(
     B3Headers.TraceIdentifier,
     B3Headers.ParentSpanIdentifier,
