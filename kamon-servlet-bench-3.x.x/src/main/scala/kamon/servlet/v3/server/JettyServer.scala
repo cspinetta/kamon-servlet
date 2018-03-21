@@ -14,7 +14,7 @@
  * =========================================================================================
  */
 
-package kamon.servlet.server
+package kamon.servlet.v3.server
 
 import java.net.InetSocketAddress
 import java.util
@@ -34,7 +34,7 @@ class JettyServer(socketAddress: InetSocketAddress = new InetSocketAddress(0)) {
   def start(): this.type = {
     val servlet = new ServletHolder(classOf[BenchServlet])
 
-//    servlet.setAsyncSupported(true)
+    servlet.setAsyncSupported(true)
     context.addServlet(servlet, "/")
     context.addFilter(classOf[KamonFilterV3], "/tracing/*", util.EnumSet.allOf(classOf[DispatcherType]))
     server.start()

@@ -14,12 +14,12 @@
  * =========================================================================================
  */
 
-package kamon.servlet.bench
+package kamon.servlet.v25.bench
 
 import java.util.concurrent.TimeUnit
 
 import kamon.Kamon
-import kamon.servlet.server.JettyServer
+import kamon.servlet.v25.server.JettyServer
 import org.openjdk.jmh.annotations._
 import org.openjdk.jmh.infra.Blackhole
 

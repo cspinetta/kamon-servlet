@@ -30,7 +30,7 @@ val scalatest         = "org.scalatest"         %% "scalatest"              % "3
 
 
 lazy val root = (project in file("."))
-    .aggregate(kamonServlet, kamonServlet25, kamonServlet3, kamonServletBench3)
+    .aggregate(kamonServlet, kamonServlet25, kamonServlet3, kamonServletBench25, kamonServletBench3)
 
 val commonSettings = Seq(
   scalaVersion := "2.12.4",
@@ -71,6 +71,18 @@ lazy val kamonServlet3 = Project("kamon-servlet-3", file("kamon-servlet-3.x.x"))
       providedScope(servletApi3) ++
       testScope(scalatest, kamonTestkit, logbackClassic, jetty, jettyServer, jettyServlet, sttp))
   .dependsOn(kamonServlet)
+
+lazy val kamonServletBench25 = Project("benchmarks-25", file("kamon-servlet-bench-2.5"))
+  .enablePlugins(JmhPlugin)
+  .settings(commonSettings: _*)
+  .settings(
+    moduleName := "kamon-servlet-bench-2.5",
+    fork in Test := true)
+  .settings(
+    libraryDependencies ++=
+      compileScope(jetty, jettyServer, jettyServlet, sttp) ++
+        providedScope(servletApi25))
+  .dependsOn(kamonServlet25)
 
 lazy val kamonServletBench3 = Project("benchmarks-3", file("kamon-servlet-bench-3.x.x"))
   .enablePlugins(JmhPlugin)
