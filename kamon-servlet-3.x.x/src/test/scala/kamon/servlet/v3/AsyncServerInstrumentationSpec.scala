@@ -55,7 +55,7 @@ class AsyncServerInstrumentationSpec extends WordSpec
     sttp.get(Uri("localhost", port).path(path)).send()
   }
 
-  "The Async Server instrumentation" should {
+  "The Server instrumentation on Async Servlet 3.x.x" should {
     "propagate the current context and respond to the ok action" in {
 
       get("/async/tracing/ok").code shouldBe 200

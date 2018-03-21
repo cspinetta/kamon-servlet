@@ -14,13 +14,13 @@
  * =========================================================================================
  */
 
-package kamon.servlet.v3
+package kamon.servlet.v25
 
 import java.util.concurrent.Executors
 
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}
-import kamon.servlet.v3.server.{JettySupport, SyncTestServlet}
+import kamon.servlet.v25.server.{JettySupport, SyncTestServlet}
 import kamon.testkit.MetricInspection
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar

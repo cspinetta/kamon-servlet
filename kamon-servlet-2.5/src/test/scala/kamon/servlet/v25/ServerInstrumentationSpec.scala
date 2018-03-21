@@ -14,10 +14,10 @@
  * =========================================================================================
  */
 
-package kamon.servlet.v3
+package kamon.servlet.v25
 
 import kamon.Kamon
-import kamon.servlet.v3.server.{JettySupport, SyncTestServlet}
+import kamon.servlet.v25.server.{JettySupport, SyncTestServlet}
 import kamon.trace.Span
 import kamon.trace.Span.TagValue
 import org.scalatest.concurrent.Eventually
@@ -53,7 +53,7 @@ class ServerInstrumentationSpec extends WordSpec
     sttp.get(Uri("localhost", port).path(path)).headers(headers: _*).send()
   }
 
-  "The Server instrumentation on Sync Servlet 3.x.x" should {
+  "The Server instrumentation on Servlet 2.5" should {
     "propagate the current context and respond to the ok action" in {
 
       get("/sync/tracing/ok").code shouldBe 200

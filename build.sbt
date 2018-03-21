@@ -37,7 +37,7 @@ val commonSettings = Seq(
   resolvers += Resolver.mavenLocal,
   resolvers += Resolver.bintrayRepo("kamon-io", "snapshots"),
   crossScalaVersions := Seq("2.12.4", "2.11.12", "2.10.6"),
-  scalacOptions ++= Seq("-Ypartial-unification", "-language:higherKinds"),
+  scalacOptions ++= Seq("-Ypartial-unification", "-language:higherKinds", "-language:postfixOps"),
   scalacOptions ++= Seq("l:method", "l:classpath", "l:project")
 )
 
