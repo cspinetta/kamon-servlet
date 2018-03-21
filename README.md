@@ -31,7 +31,7 @@ To get `kamon-servlet` in your project:
 
 To enable `kamon-servlet` on your app all you need to do is to add the 
 Kamon filter `kamon.servlet.v3.KamonFilterV3` in your web app. A simple way is to introduce a ApplicationContextListener.
-In `kamon.servlet.v3.example.KamonContextListene`[2] you can find an example:
+In [`kamon.servlet.v3.example.KamonContextListene`][2] you can find an example:
 
 ```java
 package kamon.servlet.v3.example;
@@ -67,7 +67,7 @@ public class KamonContextListener implements ServletContextListener {
 
 For servlet 2.5 there isn't a programmatically way to achieve it, but you can enable it
 adding a filter to install Kamon and add its Filter.
-In `kamon.servlet.v25.example.KamonFilterWiring`[3] you can find an example:
+In [`kamon.servlet.v25.example.KamonFilterWiring`][3] you can find an example:
 
 ```java
 package kamon.servlet.v25.example;
