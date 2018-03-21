@@ -117,10 +117,12 @@ class KamonFilterBenchmark {
 
 @State(Scope.Benchmark)
 class IncomingContext {
+  import kamon.trace.SpanCodec.B3.{Headers => B3Headers}
+
   val headersB3 = Seq(
-    ("X-B3-TraceId", "1234"),
-    ("X-B3-ParentSpanId", "2222"),
-    ("X-B3-SpanId", "4321"),
-    ("X-B3-Sampled", "1"),
-    ("X-B3-Extra-Baggage", "some=baggage;more=baggage"))
+    (B3Headers.TraceIdentifier, "1234"),
+    (B3Headers.ParentSpanIdentifier, "2222"),
+    (B3Headers.SpanIdentifier, "4321"),
+    (B3Headers.Sampled, "1"),
+    (B3Headers.Flags, "some=baggage;more=baggage"))
 }

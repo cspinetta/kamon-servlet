@@ -138,18 +138,22 @@ class ServerInstrumentationSpec extends WordSpec
   }
 
   object IncomingContext {
+    import kamon.trace.SpanCodec.B3.{Headers => B3Headers}
+
     val TraceId = "1234"
     val ParentSpanId = "2222"
     val SpanId = "4321"
     val Sampled = "1"
-    val ExtraBaggage = "some=baggage;more=baggage"
+    val Flags = "some=baggage;more=baggage"
+
 
     val headersB3 = Seq(
-      ("X-B3-TraceId", TraceId),
-      ("X-B3-ParentSpanId", ParentSpanId),
-      ("X-B3-SpanId", SpanId),
-      ("X-B3-Sampled", Sampled),
-      ("X-B3-Extra-Baggage", ExtraBaggage))
+      (B3Headers.TraceIdentifier, TraceId),
+      (B3Headers.ParentSpanIdentifier, ParentSpanId),
+      (B3Headers.SpanIdentifier, SpanId),
+      (B3Headers.Sampled, Sampled),
+      (B3Headers.Flags, Flags))
+
   }
 
 }

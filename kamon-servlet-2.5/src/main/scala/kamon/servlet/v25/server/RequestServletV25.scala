@@ -19,8 +19,11 @@ package kamon.servlet.v25.server
 import javax.servlet.ServletRequest
 import javax.servlet.http.HttpServletRequest
 import kamon.servlet.server.RequestServlet
+import kamon.trace.SpanCodec
+import org.slf4j.LoggerFactory
 
 case class RequestServletV25(underlineRequest: HttpServletRequest) extends RequestServlet {
+  private val log = LoggerFactory.getLogger(classOf[RequestServletV25])
 
   override def getMethod: String = underlineRequest.getMethod
 
@@ -28,21 +31,53 @@ case class RequestServletV25(underlineRequest: HttpServletRequest) extends Reque
 
   override def url: String = underlineRequest.getRequestURL.toString
 
-  override def headers: Map[String, String] = {
-//    val headersIterator = underlineRequest.getHeaderNames
-//    val headers = Map.newBuilder[String, String]
-//    while (headersIterator.hasMoreElements) {
-//      val name = headersIterator.nextElement()
-//      headers += (name -> underlineRequest.getHeader(name))
-//    }
-//    headers.result()
-    ??? // TODO
-  }
+  override def headers: Map[String, String] = RequestServletV25.decodeHeaders(underlineRequest)
 }
 
 object RequestServletV25 {
+  import SpanCodec.B3.{Headers => B3Headers}
+
+  private val log = LoggerFactory.getLogger(classOf[RequestServletV25])
 
   def apply(request: ServletRequest): RequestServletV25 = {
     new RequestServletV25(request.asInstanceOf[HttpServletRequest])
   }
+
+  def decodeHeaders(request: HttpServletRequest): Map[String, String] = {
+    val headersIterator = request.getHeaderNames
+    try {
+      if (headersIterator == null) {
+        log.warn("HttpServletRequest.getHeaderNames returns null")
+        RequestServletV25.tracingHeaders
+          .flatMap(headerName => {
+            val headerValue = request.getHeader(headerName)
+            if (headerValue == null) List()
+            else List(headerName -> headerValue)
+          }).toMap
+      } else {
+        val headers = Map.newBuilder[String, String]
+        while (headersIterator.hasMoreElements) {
+          val name = headersIterator.nextElement().asInstanceOf[String]
+          val value = request.getHeader(name)
+          if (value != null) {
+            headers += (name -> request.getHeader(name))
+          }
+        }
+        headers.result()
+      }
+    } catch {
+      case e: Throwable =>
+        log.error(s"Occur an error trying to decode headers of the request", e)
+        Map()
+    }
+  }
+
+  // FIXME: include extra headers (feature recently added to kamon)
+  val tracingHeaders = List(
+    B3Headers.TraceIdentifier,
+    B3Headers.ParentSpanIdentifier,
+    B3Headers.SpanIdentifier,
+    B3Headers.Sampled,
+    B3Headers.Flags
+  )
 }
