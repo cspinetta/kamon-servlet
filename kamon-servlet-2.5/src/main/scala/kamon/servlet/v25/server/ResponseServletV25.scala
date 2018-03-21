@@ -58,7 +58,7 @@ object StatusResponseExtractor {
   def status(response: HttpServletResponse): Option[Int] = {
     response match {
       case adapter: ResponseWithStatusV25 => Option(adapter.getStatus)
-      case _                                 => tryToUseGetStatus(response)
+      case _                              => tryToUseGetStatus(response)
     }
   }
 

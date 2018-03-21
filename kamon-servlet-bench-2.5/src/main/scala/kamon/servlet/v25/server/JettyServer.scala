@@ -19,9 +19,9 @@ package kamon.servlet.v25.server
 import java.net.InetSocketAddress
 import java.util
 
-import javax.servlet.{DispatcherType, Servlet}
+import javax.servlet.Servlet
 import kamon.servlet.v25.KamonFilterV25
-import org.eclipse.jetty.server.{Server, ServerConnector}
+import org.eclipse.jetty.server.{DispatcherType, Server}
 import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 
 /**
@@ -51,7 +51,7 @@ class JettyServer(socketAddress: InetSocketAddress = new InetSocketAddress(0)) {
   }
 
   def selectedPort: Int = {
-    server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort
+    server.getConnectors()(0).getLocalPort
   }
 }
 
