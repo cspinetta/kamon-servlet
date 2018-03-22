@@ -26,12 +26,17 @@ To get `kamon-servlet` in your project:
 
 
 ### Setting up
+To enable `kamon-servlet` on your app all you need to do is to add the Kamon Filter:
+
+* For Servlet 2.5: [`kamon.servlet.v25.KamonFilterV25`][2]
+* For Servlet 3.x.x: [`kamon.servlet.v3.KamonFilterV3`][3]
+
+You should register it in the specific way your framework required. Otherwise,
+you need to configure it manually. Below there are some example.
 
 #### Servlet v3+
 
-To enable `kamon-servlet` on your app all you need to do is to add the 
-Kamon filter `kamon.servlet.v3.KamonFilterV3` in your web app.
-A simple way is to introduce an `ApplicationContextListener`.
+You could programmatically register it using a `ServletContextListener`:
 
 ```java
 package kamon.servlet.v3.example;
@@ -64,7 +69,7 @@ public class KamonContextListener implements ServletContextListener {
 
 #### Servlet v2.5
 
-For Servlet 2.5 there isn't a programmatically way to achieve it, so you have to add the filter via `web.xml`:
+For Servlet 2.5 there isn't a programmatic way to achieve it, so you have to define it in `web.xml`:
 
 ```xml
 <filter>
@@ -89,3 +94,5 @@ jmh:run -i 50 -wi 20 -f1 -t1 .*Benchmark.*
 
 
 [1]: http://www.oracle.com/technetwork/java/index-jsp-135475.html
+[2]: kamon-servlet-3.x.x/src/test/java/kamon/servlet/v3/example/KamonContextListener.java
+[3]: kamon-servlet-2.5/src/test/java/kamon/servlet/v25/example/KamonFilterWiring.java
