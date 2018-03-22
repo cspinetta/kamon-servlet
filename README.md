@@ -30,8 +30,8 @@ To get `kamon-servlet` in your project:
 #### Servlet v3+
 
 To enable `kamon-servlet` on your app all you need to do is to add the 
-Kamon filter `kamon.servlet.v3.KamonFilterV3` in your web app. A simple way is to introduce a ApplicationContextListener.
-In [`kamon.servlet.v3.example.KamonContextListene`][2] you can find an example:
+Kamon filter `kamon.servlet.v3.KamonFilterV3` in your web app.
+A simple way is to introduce an `ApplicationContextListener`.
 
 ```java
 package kamon.servlet.v3.example;
@@ -47,8 +47,7 @@ public class KamonContextListener implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    Kamon.config();
-    // subscribe all your reporters here!
+    // here you might subscribe all reporters you want. e.g. `Kamon.addReporter(new PrometheusReporter())`
     servletContextEvent
         .getServletContext()
         .addFilter("KamonFilter", new KamonFilterV3())
@@ -57,7 +56,7 @@ public class KamonContextListener implements ServletContextListener {
 
   @Override
   public void contextDestroyed(ServletContextEvent arg0) {
-    Kamon.stopAllReporters();
+    // in case you have subscribed some reporters: `Kamon.stopAllReporters();`
     System.out.println("KamonContextListener destroyed");
   }
 }
@@ -65,58 +64,12 @@ public class KamonContextListener implements ServletContextListener {
 
 #### Servlet v2.5
 
-For servlet 2.5 there isn't a programmatically way to achieve it, but you can enable it
-adding a filter to install Kamon and add its Filter.
-In [`kamon.servlet.v25.example.KamonFilterWiring`][3] you can find an example:
-
-```java
-package kamon.servlet.v25.example;
-
-import java.io.IOException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import kamon.Kamon;
-import kamon.servlet.v25.KamonFilterV25;
-
-
-/**
- * Example of wiring KamonFilterV25 on a servlet-based web app
- *
- * Also you need to configure it on your web.xml
- */
-public class KamonFilterWiring implements Filter {
-
-  private final KamonFilterV25 kamonFilter = new KamonFilterV25();
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    Kamon.config();
-    // subscribe all your reporters here!
-  }
-
-  @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
-    kamonFilter.doFilter(request, response, chain);
-  }
-
-  @Override public void destroy() {
-    Kamon.stopAllReporters();
-  }
-}
-
-```
-
-Finally in your `web.xml`:
+For Servlet 2.5 there isn't a programmatically way to achieve it, so you have to add the filter via `web.xml`:
 
 ```xml
 <filter>
    <filter-name>kamonFilter</filter-name>
-   <filter-class>kamon.servlet.v25.example.KamonFilterWiring</filter-class>
+   <filter-class>kamon.servlet.v25.KamonFilterV25</filter-class>
  </filter>
  <filter-mapping>
    <filter-name>kamonFilter</filter-name>
@@ -136,5 +89,3 @@ jmh:run -i 50 -wi 20 -f1 -t1 .*Benchmark.*
 
 
 [1]: http://www.oracle.com/technetwork/java/index-jsp-135475.html
-[2]: kamon-servlet-3.x.x/src/test/java/kamon/servlet/v3/example/KamonContextListener.java
-[3]: kamon-servlet-2.5/src/test/java/kamon/servlet/v25/example/KamonFilterWiring.java
