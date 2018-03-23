@@ -3,7 +3,7 @@
 # Adapted from https://github.com/paulp/psp-std/blob/master/bin/test
 
 runTests () {
-  sbt test \
+  sbt +test \
     || exit 1
   echo "[info] $(date) - finished sbt test"
 }
