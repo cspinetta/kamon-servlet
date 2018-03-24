@@ -127,9 +127,9 @@ jmh:run -i 50 -wi 20 -f1 -t1 .*Benchmark.*
 
 
 [1]: http://www.oracle.com/technetwork/java/index-jsp-135475.html
-[2]: kamon-servlet/kamon-servlet-2.5/src/main/scala/kamon/servlet/v25/KamonFilterV25.scala
-[3]: kamon-servlet/kamon-servlet-3.x.x/src/main/scala/kamon/servlet/v3/KamonFilterV3.scala
+[2]: kamon-servlet-2.5/src/main/scala/kamon/servlet/v25/KamonFilterV25.scala
+[3]: kamon-servlet-3.x.x/src/main/scala/kamon/servlet/v3/KamonFilterV3.scala
 [4]: https://github.com/lightbend/config
-[5]: kamon-servlet/kamon-servlet-2.5/src/main/resources/reference.conf
-[6]: kamon-servlet/kamon-servlet-3.x.x/src/main/resources/reference.conf
+[5]: kamon-servlet-2.5/src/main/resources/reference.conf
+[6]: kamon-servlet-3.x.x/src/main/resources/reference.conf
 [7]: https://github.com/lightbend/config#standard-behavior
