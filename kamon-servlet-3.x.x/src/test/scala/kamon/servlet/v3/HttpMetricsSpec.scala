@@ -18,6 +18,7 @@ package kamon.servlet.v3
 
 import java.util.concurrent.Executors
 
+import com.typesafe.config.ConfigFactory
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}
 import kamon.servlet.v3.server.{JettySupport, SyncTestServlet}
@@ -41,12 +42,12 @@ class HttpMetricsSpec extends WordSpec
   with BeforeAndAfterAll
   with JettySupport {
 
-  override val servlet = SyncTestServlet()
+  override val servlet: SyncTestServlet = SyncTestServlet()
 
   override protected def beforeAll(): Unit = {
+    Kamon.reconfigure(ConfigFactory.load())
     startServer()
     startRegistration()
-    Kamon.config()
   }
 
   override protected def afterAll(): Unit = {

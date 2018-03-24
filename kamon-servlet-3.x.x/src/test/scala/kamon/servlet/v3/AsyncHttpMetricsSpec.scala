@@ -18,6 +18,7 @@ package kamon.servlet.v3
 
 import java.util.concurrent.Executors
 
+import com.typesafe.config.ConfigFactory
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}
 import kamon.servlet.v3.server.{AsyncTestServlet, JettySupport}
@@ -44,9 +45,9 @@ class AsyncHttpMetricsSpec extends WordSpec
   override val servlet = AsyncTestServlet(defaultDuration = 10)(durationSlowly = 1000)
 
   override protected def beforeAll(): Unit = {
+    Kamon.reconfigure(ConfigFactory.load())
     startServer()
     startRegistration()
-    Kamon.config()
   }
 
   override protected def afterAll(): Unit = {

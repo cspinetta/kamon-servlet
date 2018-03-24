@@ -18,6 +18,7 @@ package kamon.servlet.v3
 
 import java.time.temporal.ChronoUnit
 
+import com.typesafe.config.ConfigFactory
 import kamon.Kamon
 import kamon.servlet.v3.server.{AsyncTestServlet, JettySupport}
 import kamon.trace.Span
@@ -40,9 +41,9 @@ class AsyncServerInstrumentationSpec extends WordSpec
   override val servlet: AsyncTestServlet = AsyncTestServlet()()
 
   override protected def beforeAll(): Unit = {
+    Kamon.reconfigure(ConfigFactory.load())
     startServer()
     startRegistration()
-    Kamon.config()
   }
 
   override protected def afterAll(): Unit = {

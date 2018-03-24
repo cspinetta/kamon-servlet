@@ -18,6 +18,7 @@ package kamon.servlet.v25
 
 import java.util.concurrent.Executors
 
+import com.typesafe.config.ConfigFactory
 import kamon.Kamon
 import kamon.servlet.Metrics.{GeneralMetrics, ResponseTimeMetrics}
 import kamon.servlet.v25.server.{JettySupport, SyncTestServlet}
@@ -28,7 +29,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class HttpMetricsSpec extends WordSpec
@@ -44,15 +45,14 @@ class HttpMetricsSpec extends WordSpec
   override val servlet = SyncTestServlet()
 
   override protected def beforeAll(): Unit = {
+    Kamon.reconfigure(ConfigFactory.load())
     startServer()
     startRegistration()
-    Kamon.config()
   }
 
   override protected def afterAll(): Unit = {
     stopRegistration()
     stopServer()
-    Await.result(Kamon.stopAllReporters(), 2 seconds)
   }
 
   private val httpClient = HttpClients.createDefault()
@@ -76,7 +76,7 @@ class HttpMetricsSpec extends WordSpec
       }
 
       eventually(timeout(3 seconds)) {
-        GeneralMetrics().activeRequests.distribution().min shouldBe 0L
+        GeneralMetrics().activeRequests.distribution().min should (be > 0L and be <= 10L)
       }
       reporter.clear()
     }
