@@ -19,7 +19,6 @@ package kamon.servlet
 import kamon.Kamon
 import kamon.servlet.server._
 
-import scala.language.postfixOps
 
 /**
   * Kamon Filter to tracing propagation and metrics gathering on a Servlet-Based Web App

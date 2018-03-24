@@ -30,7 +30,6 @@ import org.scalatest.time.SpanSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, OptionValues, WordSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 
 class NoOpHttpMetricsSpec extends WordSpec
