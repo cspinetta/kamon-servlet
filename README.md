@@ -47,7 +47,7 @@ libraryDependencies += "io.kamon" %% "kamon-servlet-3" % "1.0.0"
 
 
 ### Setting up
-To enable `kamon-servlet` on your app all you need to do is to add the Kamon Filter:
+All you need to do is to add the Kamon Filter on your Web App:
 
 * For Servlet 2.5: [`kamon.servlet.v25.KamonFilterV25`][2]
 * For Servlet 3.x.x: [`kamon.servlet.v3.KamonFilterV3`][3]
@@ -103,6 +103,18 @@ For Servlet 2.5 there isn't a programmatic way to achieve it, so you have to def
  </filter-mapping>
 ```
 
+### Config
+
+`kamon-servlet` uses [TypeSafe Config][4]. Default configuration is
+in `resources/reference.conf` for each subproject:
+
+* [kamon-servlet-25 config][5]
+* [kamon-servlet-3 config][6]
+
+You can customize/override any property adding an `application.conf` in the `/resources/` of your app or
+by providing *System properties* (e.g. `-Dpath.of.your.key=value`). This is the standard
+behavior of *TypeSafe Config*, for more info see its [doc][7].
+
 ### Micro Benchmarks
 
 Execute from your terminal:
@@ -115,5 +127,9 @@ jmh:run -i 50 -wi 20 -f1 -t1 .*Benchmark.*
 
 
 [1]: http://www.oracle.com/technetwork/java/index-jsp-135475.html
-[2]: kamon-servlet-3.x.x/src/test/java/kamon/servlet/v3/example/KamonContextListener.java
-[3]: kamon-servlet-2.5/src/test/java/kamon/servlet/v25/example/KamonFilterWiring.java
+[2]: kamon-servlet/kamon-servlet-2.5/src/main/scala/kamon/servlet/v25/KamonFilterV25.scala
+[3]: kamon-servlet/kamon-servlet-3.x.x/src/main/scala/kamon/servlet/v3/KamonFilterV3.scala
+[4]: https://github.com/lightbend/config
+[5]: kamon-servlet/kamon-servlet-2.5/src/main/resources/reference.conf
+[6]: kamon-servlet/kamon-servlet-3.x.x/src/main/resources/reference.conf
+[7]: https://github.com/lightbend/config#standard-behavior
