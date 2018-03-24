@@ -21,7 +21,7 @@ import java.util.Locale
 
 import kamon.Kamon
 import kamon.context.{Context, Storage, TextMap}
-import kamon.servlet.Cont
+import kamon.servlet.Continuation
 import kamon.servlet.utils.RequestContinuation
 import kamon.trace.Span
 
@@ -45,7 +45,7 @@ object ServletTracing {
     * @return
     */
   def withTracing[Hole <: TracingContinuation, Result](request: RequestServlet, response: ResponseServlet)
-                                                      (continuation: Cont[TracingContinuation, Result]): Result = {
+                                                      (continuation: Continuation[TracingContinuation, Result]): Result = {
 
     val incomingContext = decodeContext(request)
     val serverSpan = createSpan(incomingContext, request)

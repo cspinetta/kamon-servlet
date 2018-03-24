@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit
 
 import kamon.Kamon
 import kamon.metric.{Histogram, RangeSampler}
-import kamon.servlet.Cont
+import kamon.servlet.Continuation
 import kamon.servlet.Metrics.{GeneralMetrics, RequestTimeMetrics, ResponseTimeMetrics, ServiceMetrics}
 import kamon.servlet.utils.{OnlyOnce, RequestContinuation}
 
@@ -56,13 +56,13 @@ trait ServletMetrics {
     * @return unit with possible exception caught
     */
   def withMetrics[Result](start: Instant, request: RequestServlet, response: ResponseServlet)
-                         (continuation: Cont[MetricsContinuation, Result]): Result
+                         (continuation: Continuation[MetricsContinuation, Result]): Result
 }
 
 case class DefaultServletMetrics(serviceMetrics: ServiceMetrics) extends ServletMetrics {
 
   override def withMetrics[Result](start: Instant, request: RequestServlet, response: ResponseServlet)
-                                  (continuation: Cont[MetricsContinuation, Result]): Result = {
+                                  (continuation: Continuation[MetricsContinuation, Result]): Result = {
 
     val serviceMetrics = ServiceMetrics(GeneralMetrics(), RequestTimeMetrics(), ResponseTimeMetrics())
     serviceMetrics.generalMetrics.activeRequests.increment()
@@ -74,7 +74,7 @@ case class DefaultServletMetrics(serviceMetrics: ServiceMetrics) extends Servlet
 case object NoOpServletMetrics extends ServletMetrics {
 
   override def withMetrics[Result](start: Instant, request: RequestServlet, response: ResponseServlet)
-                                  (continuation: Cont[MetricsContinuation, Result]): Result = {
+                                  (continuation: Continuation[MetricsContinuation, Result]): Result = {
     continuation(NoOpMetricsContinuation)
   }
 }
