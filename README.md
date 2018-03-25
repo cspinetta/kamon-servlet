@@ -3,6 +3,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kamon-io/Kamon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kamon/kamon-servlet_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.kamon/kamon-servlet_2.12)
 
+**Moved to [https://github.com/kamon-io/kamon-servlet](https://github.com/kamon-io/kamon-servlet)**
 
 ### Getting Started
 
